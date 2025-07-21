@@ -14,6 +14,9 @@ struct ContentView: View {
     @State var leftAmount = ""
     @State var rightAmount = ""
     
+    @FocusState var leftTypingFocus: Bool
+    @FocusState var rightTypingFocus: Bool
+    
     @State var leftCurrency: Currency = .silverPiece
     @State var rightCurrency: Currency = .goldPiece
     
@@ -35,7 +38,7 @@ struct ContentView: View {
                 Text("Currency Exchange")
                     .font(.largeTitle)
                     .foregroundStyle(.white)
-                    
+                
                 
                 // Conversion section
                 HStack {
@@ -62,6 +65,12 @@ struct ContentView: View {
                         // Text field
                         TextField("Amount", text: $leftAmount)
                             .textFieldStyle(.roundedBorder)
+                            .focused($leftTypingFocus)
+                            .onChange(of: leftAmount) {
+                                if leftTypingFocus {
+                                    rightAmount = leftCurrency.convert(leftAmount, to: rightCurrency)
+                                }
+                            }
                     }
                     
                     // Equal sign
@@ -94,6 +103,12 @@ struct ContentView: View {
                         TextField("Amount", text: $rightAmount)
                             .textFieldStyle(.roundedBorder)
                             .multilineTextAlignment(.trailing)
+                            .focused($rightTypingFocus)
+                            .onChange(of: rightAmount) {
+                                if rightTypingFocus {
+                                    leftAmount = rightCurrency.convert(rightAmount, to: leftCurrency)
+                                }
+                            }
                     }
                 }
                 .padding()
